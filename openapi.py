@@ -35,7 +35,9 @@ def get_movie_recommendation(films, ratings, genre, age_rating, year_range):
 
 def get_trivia(films):
     prompt = (
-        f"From this list of films watched by a user: {films}, take one film and generate 5 movie trivia questions based on that film with the answer posed as a muliple choice questions include only 3 answers to choose from")
+        f"From this film watched by a user: {films}, take the film "
+        f"and generate 5 movie trivia questions based on that film with the answer posed as a multiple choice questions"
+        f"and include only 3 answers to choose from")
 
     return ask_ai(prompt)
 
@@ -115,4 +117,15 @@ def start_trivia(films):
     #print(f"PARSED QUESTIONS: {parsed_questions}")
     #ask_trivia_questions(parsed_questions)
     return parsed_questions
+
+
+def evaluate_trivia_answers(user_answers, trivia_data_list):
+    score = 0
+    for i, trivia_data in enumerate(trivia_data_list):
+        correct_answer_letter = trivia_data['correct_answer'].split(' ')[0]
+        user_answer = user_answers.get(f'answer_{i}')
+        if user_answer and user_answer == correct_answer_letter:
+            score += 1
+
+    return score, len(trivia_data_list)
 
