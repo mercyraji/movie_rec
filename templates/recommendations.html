@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Recommendations</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f0f0f0; padding: 20px; }
+        .recommendation { background-color: #fff; padding: 20px; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        h1 { text-align: center; }
+        ul { list-style: none; padding: 0; }
+        li { padding: 10px; border-bottom: 1px solid #ccc; }
+        button { padding: 10px 20px; background-color: #007bff; color: #fff; border: none; border-radius: 5px; cursor: pointer; margin-top: 20px; }
+        button:hover { background-color: #0056b3; }
+    </style>
+</head>
+<body>
+    <h1>Movie Recommendations</h1>
+    <div class="recommendation">
+        <h2>Based on your reviews, we recommend you to watch:</h2>
+        <form method="POST" action="{{ url_for('add_to_wishlist') }}">
+            <ul>
+                {% for movie in recommendations %}
+                    <li>
+                        <input type="checkbox" name="selected_movies" value="{{ movie['title'] }} - {{ movie['description'] }}">
+                        <strong>{{ movie['title'] }}</strong>: {{ movie['description'] }}
+                    </li>
+                {% endfor %}
+            </ul>
+            <button type="submit">Add to Wishlist</button>
+            <a href="{{ url_for('index') }}" class="button">Go to Home Page</a>
+        </form>
+    </div>
+
+<script>
+        function addToWishlist(id, title) {
+    fetch("/wishlist/add", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ id: id, title: title })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert(`${title} added to wishlist!`);
+            location.reload();
+        } else {
+            alert(`Failed to add ${title} to wishlist.`);
+        }
+    });
+}
+</script>
+
+</body>
+</html>
+

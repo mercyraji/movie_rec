@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Get Recommendation</title>
+</head>
+<body>
+    <h1>Get Movie Recommendation</h1>
+    <form method="POST">
+        <label for="genre">Genre:</label>
+        <select name="genre" id="genre">
+            {% for genre in genres %}
+                <option value="{{ genre }}">{{ genre }}</option>
+            {% endfor %}
+        </select><br>
+
+        <label for="age_rating">Age Rating:</label>
+        <select name="age_rating" id="age_rating">
+            {% for rating in age_ratings %}
+                <option value="{{ rating }}">{{ rating }}</option>
+            {% endfor %}
+        </select><br>
+
+        <label for="year_range">Year Range:</label>
+        <select name="year_range" id="year_range">
+            {% for range in year_ranges %}
+                <option value="{{ range }}">{{ range }}</option>
+            {% endfor %}
+        </select><br>
+
+        <button type="submit">Get Recommendation</button>
+    </form>
+</body>
+</html>
