@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trivia Game</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f0f0f0; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; background-color: #fff; padding: 20px; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        h1 { margin-bottom: 20px; }
+        .question { margin-bottom: 20px; }
+        .options { margin-bottom: 20px; }
+        .button { background-color: #007bff; color: #fff; padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; text-decoration: none; }
+        .button:hover { background-color: #0056b3; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Trivia Game - Movie Picked Randomly from Reviews</h1>
+        <form method="POST">
+            <div class="questions">
+                {% for question in questions %}
+                <div class="question">
+                    <p><strong>Question {{ i + 1 }}:</strong> {{ question['question'] }}</p>
+                    <div class="options">
+                        {% for option in question['posed_answers'] %}
+                        <label>
+                            <input type="radio" name="question_{{ i }}" value="{{ option }}"> {{ option }}
+                        </label><br>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <button type="submit" class="button">Submit</button>
+        </form>
+    </div>
+</body>
+</html>
+
+

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Reviews</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f0f0f0; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; background-color: #fff; padding: 20px; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        h1 { margin-bottom: 20px; }
+        .review { margin-bottom: 20px; padding: 10px; background-color: #f9f9f9; border-radius: 5px; }
+        .review h3 { margin: 0 0 10px; }
+        .back-button { background-color: #007bff; color: #fff; padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; text-decoration: none; }
+        .back-button:hover { background-color: #0056b3; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>My Reviews</h1>
+        {% for review in reviews %}
+        <div class="review">
+            <h3>Title: {{ review['title'] }}</h3>
+            <p><strong>Rating:</strong> {{ review['rating'] }} stars</p>
+            <p><strong>Comment:</strong> {{ review['comment'] }}</p>
+            <p><strong>Review Date:</strong> {{ review['review_date'] }}</p>
+        </div>
+        {% else %}
+        <p>No reviews yet.</p>
+        {% endfor %}
+        <a href="{{ url_for('profile') }}" class="back-button">Back to Profile</a>
+    </div>
+</body>
+</html>

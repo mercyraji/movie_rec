@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f0f0f0; padding: 20px; }
+        a { margin: 10px; display: inline-block; padding: 10px 20px; background-color: #007bff; color: #fff; text-decoration: none; border-radius: 5px; }
+        a:hover { background-color: #0056b3; }
+    </style>
+</head>
+<body>
+    <h1>Welcome to the Movie Review App</h1>
+    {% if session.user_id %}
+        <a href="/log-out">Logout</a>
+        <a href="/submit-review">Submit a Review</a>
+        <a href="{{ url_for('profile') }}">Go to Profile</a>
+        <a href="{{ url_for('trivia') }}">Movie Trivia</a>
+    {% else %}
+        <a href="/log-in">Login</a>
+        <a href="/register">Register</a>
+    {% endif %}
+</body>
+</html>

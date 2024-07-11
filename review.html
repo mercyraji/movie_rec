@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit a Movie Review</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f0f0f0; padding: 20px; }
+        form { background-color: #fff; padding: 20px; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        input, textarea { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; }
+        button { padding: 10px 20px; background-color: #007bff; color: #fff; border: none; border-radius: 5px; cursor: pointer; }
+        button:hover { background-color: #0056b3; }
+    </style>
+</head>
+<body>
+    <h1>Submit a Movie Review</h1>
+    <form id="reviewForm" method="POST" action="{{ url_for('submit_review') }}">  <!-- Ensure method is POST and action is correct -->
+        <input type="text" name="title" placeholder="Movie Title" required>
+        <input type="number" name="rating" placeholder="Rating" required min="1" max="5">
+        <textarea name="comment" placeholder="Your review" required></textarea>
+        <button type="submit">Submit Review</button>
+    </form>
+</body>
+</html>

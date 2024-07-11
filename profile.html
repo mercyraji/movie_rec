@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f0f0f0; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; background-color: #fff; padding: 20px; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        h1 { margin-bottom: 20px; }
+        p { margin: 10px 0; }
+        .button { background-color: #007bff; color: #fff; padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; text-decoration: none; }
+        .button:hover { background-color: #0056b3; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Profile Information</h1>
+        <p><strong>Username:</strong> {{ user['username'] }}</p>
+        <p><strong>Email:</strong> {{ user['email'] }}</p>
+        <p><strong>Sign Up Date:</strong> {{ user['sign_up_date'] }}</p>
+        <a href="{{ url_for('my_reviews') }}" class="button">View My Reviews</a>
+        <a href="{{ url_for('index') }}" class="button">Go Back Home</a>
+        <a href="{{ url_for('submit_review') }}" class="button">Submit A Review</a>
+    </div>
+</body>
+</html>
