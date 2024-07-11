@@ -20,6 +20,8 @@
         <p><strong>Email:</strong> {{ user['email'] }}</p>
         <p><strong>Sign Up Date:</strong> {{ user['sign_up_date'] }}</p>
         <a href="{{ url_for('my_reviews') }}" class="button">View My Reviews</a>
+        <a href="{{ url_for('view_wishlist') }}" class="button">View My Wishlist</a>
+        <a href="{{ url_for('search_movies') }}" class="button">Search Movies</a>
         <a href="{{ url_for('index') }}" class="button">Go Back Home</a>
         <a href="{{ url_for('submit_review') }}" class="button">Submit A Review</a>
     </div>

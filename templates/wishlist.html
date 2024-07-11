@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Wishlist</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f0f0f0; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; background-color: #fff; padding: 20px; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        h1 { margin-bottom: 20px; }
+        .movie { margin: 10px 0; padding: 10px; background-color: #fff; border-radius: 5px; box-shadow: 0 0 5px rgba(0,0,0,0.1); }
+        .remove-btn { padding: 5px 10px; background-color: #dc3545; color: #fff; border: none; border-radius: 5px; cursor: pointer; }
+        .remove-btn:hover { background-color: #c82333; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>My Wishlist</h1>
+        {% if wishlist %}
+            {% for movie in wishlist %}
+                <div class="movie">
+                    <p>{{ movie.title }} (Added on {{ movie.added_date }})</p>
+                    <form method="POST" action="{{ url_for('remove_from_wishlist') }}">
+                        <input type="hidden" name="title" value="{{ movie.title }}">
+                        <button type="submit" class="remove-btn">Remove from Wishlist</button>
+                    </form>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>Your wishlist is empty.</p>
+        {% endif %}
+        <a href="{{ url_for('index') }}" class="button">Go Back Home</a>
+    </div>
+</body>
+</html>

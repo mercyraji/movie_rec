@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Movies</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f0f0f0; padding: 20px; }
+        form { background-color: #fff; padding: 20px; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        input { width: 80%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; }
+        button { padding: 10px 20px; background-color: #007bff; color: #fff; border: none; border-radius: 5px; cursor: pointer; }
+        button:hover { background-color: #0056b3; }
+        .movie { margin: 10px 0; padding: 10px; background-color: #fff; border-radius: 5px; box-shadow: 0 0 5px rgba(0,0,0,0.1); }
+        .add-btn { padding: 5px 10px; background-color: #28a745; color: #fff; border: none; border-radius: 5px; cursor: pointer; }
+        .add-btn:hover { background-color: #218838; }
+    </style>
+</head>
+<body>
+    <h1>Search Movies</h1>
+    <form method="GET" action="{{ url_for('search_movies') }}">
+        <input type="text" name="query" placeholder="Search for a movie" required>
+        <button type="submit">Search</button>
+    </form>
+
+    {% if movies %}
+        <h2>Search Results</h2>
+        <form method="POST" action="{{ url_for('add_to_wishlist') }}">
+            {% for movie in movies %}
+                <div class="movie">
+                    <p>{{ movie.title }} ({{ movie.year }})</p>
+                    <button class="add-btn" type="button" onclick="addToWishlist('{{ movie.id }}', '{{ movie.title }}')">+</button>
+                </div>
+            {% endfor %}
+            <input type="hidden" name="wishlist" id="wishlist">
+            <button type="submit">Add to Wishlist</button>
+        </form>
+    {% endif %}
+
+    <script>
+        let wishlist = [];
+
+        function addToWishlist(id, title) {
+            if (!wishlist.some(movie => movie.id === id)) {
+                wishlist.push({ id: id, title: title });
+                document.getElementById('wishlist').value = JSON.stringify(wishlist);
+                alert(`${title} added to wishlist!`);
+            }
+        }
+    </script>
+</body>
+</html>
