@@ -112,12 +112,13 @@ def ask_trivia(user_id):
     return openapi.start_trivia(movies)
 
 def get_wishlist(user_id):
-    c.execute('''SELECT m.title, w.added_date 
+    c.execute('''SELECT m.id, m.title, w.added_date 
                  FROM wishlist w
                  JOIN movies m ON w.movie_id = m.id
                  WHERE w.user_id = ?''', (user_id,))
     wishlist = c.fetchall()
-    return [{'title': item['title'], 'added_date': item['added_date']} for item in wishlist]
+    return [{'id': item['id'], 'title': item['title'], 'added_date': item['added_date']} for item in wishlist]
+
 
 def add_to_wishlist(user_id, movie_id, title):
     added_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")

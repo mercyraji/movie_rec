@@ -6,16 +6,31 @@
     <title>Search Movies</title>
     <style>
         body { font-family: Arial, sans-serif; background-color: #f0f0f0; padding: 20px; }
+        .navbar { background-color: #007bff; padding: 10px; border-radius: 5px; margin-bottom: 20px; }
+        .navbar a { color: #fff; margin-right: 10px; text-decoration: none; padding: 10px 20px; border-radius: 5px; }
+        .navbar a:hover { background-color: #0056b3; }
         form { background-color: #fff; padding: 20px; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
         input { width: 80%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; }
         button { padding: 10px 20px; background-color: #007bff; color: #fff; border: none; border-radius: 5px; cursor: pointer; }
         button:hover { background-color: #0056b3; }
-        .movie { margin: 10px 0; padding: 10px; background-color: #fff; border-radius: 5px; box-shadow: 0 0 5px rgba(0,0,0,0.1); }
+        .movie { margin: 10px 0; padding: 10px; background-color: #fff; border-radius: 5px; box-shadow: 0 0 5px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; }
+        .movie img { max-width: 100px; margin-right: 20px; }
+        .movie-details { display: flex; align-items: center; }
         .add-btn { padding: 5px 10px; background-color: #28a745; color: #fff; border: none; border-radius: 5px; cursor: pointer; }
         .add-btn:hover { background-color: #218838; }
+        .remove-btn { padding: 5px 10px; background-color: #dc3545; color: #fff; border: none; border-radius: 5px; cursor: pointer; }
+        .remove-btn:hover { background-color: #c82333; }
     </style>
 </head>
 <body>
+    <div class="navbar">
+        <a href="{{ url_for('index') }}">Home</a>
+        <a href="{{ url_for('profile') }}">Profile</a>
+        <a href="{{ url_for('view_wishlist') }}">Wishlist</a>
+        <a href="{{ url_for('submit_review') }}">Submit Review</a>
+        <a href="{{ url_for('trivia') }}">Trivia</a>
+        <a href="{{ url_for('logout') }}">Logout</a>
+    </div>
     <h1>Search Movies</h1>
     <form method="GET" action="{{ url_for('search_movies') }}">
         <input type="text" name="query" placeholder="Search for a movie" required>
@@ -24,28 +39,66 @@
 
     {% if movies %}
         <h2>Search Results</h2>
-        <form method="POST" action="{{ url_for('add_to_wishlist') }}">
+        <div id="movie-list">
             {% for movie in movies %}
                 <div class="movie">
-                    <p>{{ movie.title }} ({{ movie.year }})</p>
-                    <button class="add-btn" type="button" onclick="addToWishlist('{{ movie.id }}', '{{ movie.title }}')">+</button>
+                    <div class="movie-details">
+                        <img src="{{ movie['image_url'] }}" alt="{{ movie['title'] }}">
+                        <div>
+                            <p>{{ movie['title'] }} ({{ movie['year'] }})</p>
+                            <p>{{ movie['description'] }}</p>
+                        </div>
+                    </div>
+                    <div>
+                        {% if movie['in_wishlist'] %}
+                            <button class="remove-btn" onclick='removeFromWishlist("{{ movie["id"] }}", "{{ movie["title"] }}")'>-</button>
+                        {% else %}
+                            <button class="add-btn" onclick='addToWishlist("{{ movie["id"] }}", "{{ movie["title"] }}")'>+</button>
+                        {% endif %}
+                    </div>
                 </div>
             {% endfor %}
-            <input type="hidden" name="wishlist" id="wishlist">
-            <button type="submit">Add to Wishlist</button>
-        </form>
+        </div>
     {% endif %}
 
     <script>
-        let wishlist = [];
-
         function addToWishlist(id, title) {
-            if (!wishlist.some(movie => movie.id === id)) {
-                wishlist.push({ id: id, title: title });
-                document.getElementById('wishlist').value = JSON.stringify(wishlist);
-                alert(`${title} added to wishlist!`);
-            }
+    fetch("/wishlist/add", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ id: id, title: title })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert(`${title} added to wishlist!`);
+            location.reload();
+        } else {
+            alert(`Failed to add ${title} to wishlist.`);
         }
+    });
+}
+
+function removeFromWishlist(id, title) {
+    fetch("/wishlist/remove", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ id: id, title: title })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert(`${title} removed from wishlist!`);
+            location.reload();
+        } else {
+            alert(`Failed to remove ${title} from wishlist.`);
+        }
+    });
+}
     </script>
 </body>
 </html>

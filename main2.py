@@ -1,13 +1,33 @@
 from flask import Flask, request, jsonify, render_template, session, redirect, url_for
 from cinemagoer import Cinemagoer
-import movie_rec
-from db import get_db
+from datetime import datetime
+import sqlite3
+import hashlib
 import json
+
+import movie_rec
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '9bf26e1d684bc092e43722e46066e1af'
 
 cg = Cinemagoer()
+
+def init_db():
+    conn = sqlite3.connect('database.db')
+    c = conn.cursor()
+
+    # Execute SQL script
+    try:
+        with open('database.sql', 'r') as f:
+            c.executescript(f.read())
+        conn.commit()
+    except sqlite3.OperationalError as e:
+        print(f"Error during database initialization: {e}")
+    finally:
+        conn.close()
+
+# Initialize the database
+init_db()
 
 @app.route('/')
 def index():
@@ -97,11 +117,22 @@ def search_movies():
     if not query:
         return render_template('search.html', movies=[])
     
+    user_id = session.get('user_id')
+    wishlist_movie_ids = []
+    if user_id:
+        wishlist_movies = movie_rec.get_wishlist(user_id)
+        wishlist_movie_ids = [movie['id'] for movie in wishlist_movies]
+    
     movies = cg.search_movie(query)
-    search_results = [{'id': movie.movieID, 'title': movie['title'], 'year': movie.get('year', 'N/A')} for movie in movies]
+    search_results = [{
+        'id': movie.movieID,
+        'title': movie['title'],
+        'year': movie.get('year', 'N/A'),
+        'image_url': movie.get('cover url', '/static/default_movie.png'),
+        'in_wishlist': movie.movieID in wishlist_movie_ids
+    } for movie in movies]
 
     return render_template('search.html', movies=search_results)
-
 
 @app.route('/wishlist', methods=['GET'])
 def view_wishlist():
@@ -116,33 +147,37 @@ def view_wishlist():
 @app.route('/wishlist/add', methods=['POST'])
 def add_to_wishlist():
     if 'user_id' not in session:
-        return jsonify({'error': 'User not logged in'}), 403
+        return jsonify({'success': False, 'error': 'User not logged in'}), 403
 
     user_id = session['user_id']
-    wishlist = request.form['wishlist']
-    wishlist = json.loads(wishlist)
+    data = request.get_json()  # This line ensures JSON data is parsed correctly
+    movie_id = data['id']
+    title = data['title']
 
-    success = all(movie_rec.add_to_wishlist(user_id, movie['id'], movie['title']) for movie in wishlist)
+    success = movie_rec.add_to_wishlist(user_id, movie_id, title)
 
     if success:
-        return redirect(url_for('view_wishlist'))
+        return jsonify({'success': True})
     else:
-        return jsonify({'error': 'Failed to add to wishlist'}), 400
+        return jsonify({'success': False}), 400
 
 @app.route('/wishlist/remove', methods=['POST'])
 def remove_from_wishlist():
     if 'user_id' not in session:
-        return jsonify({'error': 'User not logged in'}), 403
+        return jsonify({'success': False, 'error': 'User not logged in'}), 403
 
     user_id = session['user_id']
-    title = request.form['title']
+    data = request.get_json()  # This line ensures JSON data is parsed correctly
+    movie_id = data['id']
+    title = data['title']
 
     success = movie_rec.remove_from_wishlist(user_id, title)
 
     if success:
-        return redirect(url_for('view_wishlist'))
+        return jsonify({'success': True})
     else:
-        return jsonify({'error': 'Failed to remove from wishlist'}), 400
+        return jsonify({'success': False}), 400
+
 
 @app.route('/trivia', methods=['GET', 'POST'])
 def trivia():
