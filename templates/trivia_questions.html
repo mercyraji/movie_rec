@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trivia Questions</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f0f0f0; padding: 20px; }
+        .trivia { background-color: #fff; padding: 20px; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        h1 { text-align: center; }
+        .question { margin-bottom: 15px; }
+        button { padding: 10px 20px; background-color: #007bff; color: #fff; border: none; border-radius: 5px; cursor: pointer; }
+        button:hover { background-color: #0056b3; }
+    </style>
+</head>
+<body>
+    <div class="trivia">
+        <h1>Trivia Questions for "{{ movie_title }}"</h1>
+        <form method="POST" action="{{ url_for('trivia_submit') }}">
+            <input type="hidden" name="movie_title" value="{{ movie_title }}">
+            {% for question in questions %}
+                <div class="question">
+                    <p>{{ question['question'] }}</p>
+                    {% for answer in question['posed_answers'] %}
+                        <div>
+                            <input type="radio" id="answer_{{ loop.index }}" name="answer_{{ loop.index }}" value="{{ answer[0] }}" required>
+                            <label for="answer_{{ loop.index }}">{{ answer }}</label>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+            <button type="submit">Submit Answers</button>
+            <a href="{{ url_for('index') }}" class="button">Go Back Home</a>
+        </form>
+    </div>
+</body>
+</html>
+
