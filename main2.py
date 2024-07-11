@@ -3,6 +3,7 @@ import movie_rec
 import sqlite3
 import openapi
 from cinemagoer import Cinemagoer
+import re
 import cinemagoer
 
 app = Flask(__name__)
@@ -161,20 +162,21 @@ def get_recommendation():
         for rec in recommendations_list:
             if rec and ' - ' in rec:
                 title, description = rec.split(' - ', 1)
-                parsed_recommendations.append({'title': title.strip(), 'description': description.strip()})
+                stripped_title = re.sub(r'^\d+\.\s*', '', title)  # Remove leading digits and period
+                parsed_recommendations.append({'title': stripped_title.strip(), 'description': description.strip()})
 
         # Extract just the movie titles
-        movie_titles = [rec['title'] for rec in parsed_recommendations]
-        movie_ids = []
+        #movie_titles = [rec['title'] for rec in parsed_recommendations]
+        """movie_ids = []
         for movie in movie_titles:
-            movie_ids.append(cinemagoer.get_movie_id(movie))
+            movie_ids.append(cinemagoer.get_movie_id(movie))"""
 
         return render_template('recommendations.html', recommendations=parsed_recommendations)
 
     genres = ["Action", "Adventure", "Comedy", "Drama", "Fantasy", "Horror", "Mystery", "Romance", "Sci-Fi", "Thriller"]
     age_ratings = ["G", "PG", "PG-13", "R"]
     year_ranges = ["2000-2010", "2011-2015", "2016-2020", "2021-present"]
-    return render_template('recommend.html', genres=genres, age_ratings=age_ratings, year_ranges=year_ranges)
+    return render_template('recommend.html')
 
 
 @app.route('/search', methods=['GET'])
