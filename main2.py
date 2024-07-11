@@ -4,7 +4,6 @@ import sqlite3
 import openapi
 from cinemagoer import Cinemagoer
 import re
-import cinemagoer
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '9bf26e1d684bc092e43722e46066e1af'
@@ -117,24 +116,45 @@ def trivia():
         return redirect(url_for('log-in'))
 
     user_id = session['user_id']
-    trivia_questions = movie_rec.ask_trivia(user_id)
 
     if request.method == 'POST':
+        movie_choice = request.form.get('movie_title')
+        if not movie_choice:
+            flash('Please enter a movie title.')
+            return redirect(url_for('trivia'))
 
-        user_answers = request.form
+        trivia_questions = openapi.start_trivia(movie_choice)
+        # Store questions in the session
+        session['trivia_questions'] = trivia_questions
+        session['movie_title'] = movie_choice
+        """if not trivia_questions:
+            flash('No questions available for the selected movie.')
+            return redirect(url_for('trivia'))"""
 
-        score = 0
-        for i, question in enumerate(trivia_questions):
-            """if user_answers.get(f'question_{i}').strip().upper() in trivia_questions['correct_answer'].split(' ')[0]:
-               score += 1"""
-            user_answer = user_answers.get(f'question_{i}')
-            if user_answer == trivia_questions['correct_answer']:
-                score += 1
+        return render_template('trivia_questions.html', movie_title=movie_choice, questions=trivia_questions)
 
-        return render_template('trivia_result.html',
-                               correct_answers=trivia_questions, total_questions=len(trivia_questions))
+    return render_template('trivia_form.html')
 
-    return render_template('trivia.html', questions=trivia_questions)
+
+@app.route('/trivia_submit', methods=['POST'])
+def trivia_submit():
+    user_answers = {key: request.form[key] for key in request.form if key.startswith('answer_')}
+    movie_title = request.form.get('movie_title')
+
+    if not movie_title or not user_answers:
+        flash('Invalid trivia submission.')
+        return redirect(url_for('trivia'))
+
+    # Retrieve trivia data from the session
+    trivia_data_list = session.get('trivia_questions')
+    if not trivia_data_list:
+        flash('No trivia questions found.')
+        return redirect(url_for('trivia'))
+
+    # Evaluate user answers
+    score, total_questions = openapi.evaluate_trivia_answers(user_answers, trivia_data_list)
+
+    return render_template('trivia_results.html', score=score, total_questions=total_questions)
 
 
 @app.route('/get-recommendation', methods=['GET','POST'])
